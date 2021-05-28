@@ -43,6 +43,18 @@ final class ControlsViewController: ViewController {
   let viewController: ControllableViewController
 
   weak var delegate: ControlsViewControllerDelegate?
+  
+  override public var shouldAutorotate: Bool {
+    return false
+  }
+  
+  override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+      return .landscapeLeft
+  }
+  
+  override public var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+    return .landscapeLeft
+  }
 
   lazy var durationBarButtonItem = UIBarButtonItem(
     title: nil,
@@ -93,7 +105,7 @@ final class ControlsViewController: ViewController {
 
   func startVideoRecording() {
     do {
-      let size = CGSize(width: 720, height: 1280)
+      let size = CGSize(width: 1280, height: 720)
       let videoRecording = try viewController.startVideoRecording(size: size)
 
       let formatted: (TimeInterval) -> String = {

@@ -31,6 +31,18 @@ import StoreKit
 final class MainViewController: ViewController {
 
   static let cellResuseIdentifier = "Cell"
+  
+  override public var shouldAutorotate: Bool {
+    return false
+  }
+  
+  override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+      return .landscapeLeft
+  }
+  
+  override public var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+    return .landscapeLeft
+  }
 
   typealias Item = (title: String, controller: ControllableViewController.Type)
   let items: [Item] = {
@@ -82,9 +94,29 @@ extension MainViewController: UITableViewDelegate {
     let item = items[indexPath.row]
     let contentController = item.controller.init()
     let controlsController = ControlsViewController(contentController)
+    controlsController.modalPresentationStyle = .fullScreen
     controlsController.delegate = self
-    navigationController?.pushViewController(controlsController, animated: true)
+    navigationController?.present(controlsController, animated: false, completion: nil)
+//    navigationController?.pushViewController(controlsController, animated: true)
   }
+}
+
+//MARK: - UIApplication Extension
+extension UIApplication {
+    class func topViewController(viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
+        if let nav = viewController as? UINavigationController {
+            return topViewController(viewController: nav.visibleViewController)
+        }
+        if let tab = viewController as? UITabBarController {
+            if let selected = tab.selectedViewController {
+                return topViewController(viewController: selected)
+            }
+        }
+        if let presented = viewController?.presentedViewController {
+            return topViewController(viewController: presented)
+        }
+        return viewController
+    }
 }
 
 extension MainViewController: ControlsViewControllerDelegate {
@@ -96,6 +128,6 @@ extension MainViewController: ControlsViewControllerDelegate {
 
   func controlsViewControllerDidTakeVideoAt(_ url: URL) {
     let controller = VideoPreviewController(videoURL: url)
-    navigationController?.pushViewController(controller, animated: true)
+    UIApplication.topViewController()?.present(controller, animated: false, completion: nil)
   }
 }
